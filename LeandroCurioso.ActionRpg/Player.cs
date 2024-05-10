@@ -17,6 +17,9 @@ namespace LeandroCurioso.ActionRpg
         private bool isMoving = false;
 
         public Vector2 Position { get { return position; } }
+        public SpriteAnimation anim;
+
+        public SpriteAnimation[] animations = new SpriteAnimation[4];
 
         public void SetX(float newX) 
         {  
@@ -32,6 +35,9 @@ namespace LeandroCurioso.ActionRpg
         {
             KeyboardState kState = Keyboard.GetState();
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            isMoving = false;
+
             if (kState.IsKeyDown(Keys.Right)) 
             {
                 direction = Dir.Right;
@@ -56,7 +62,7 @@ namespace LeandroCurioso.ActionRpg
                 isMoving = true;
             }
 
-            if (!isMoving)
+            if (isMoving)
             {
                 switch (direction)
                 {
@@ -66,15 +72,25 @@ namespace LeandroCurioso.ActionRpg
                     case Dir.Up:
                         position.Y -= speed * dt;
                         break;
-                    case Dir.Right:
-                        position.X += speed * dt;
-                        break;
                     case Dir.Left:
                         position.X -= speed * dt;
+                        break;
+                    case Dir.Right:
+                        position.X += speed * dt;
                         break;
                 }
             }
 
+            anim = animations[(int)direction];
+            anim.Position = new Vector2(position.X - 48, position.Y - 48);
+            if (isMoving)
+            {
+                anim.Update(gameTime);
+            } 
+            else
+            {
+                anim.setFrame(1);
+            }
         }
 
     }

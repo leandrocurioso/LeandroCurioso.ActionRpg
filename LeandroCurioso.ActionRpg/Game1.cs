@@ -1,17 +1,20 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Comora;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace LeandroCurioso.ActionRpg
 {
     enum Dir {
-        Up, Down, Left, Right
+        Down, Up, Left, Right
     }
 
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        Camera camera;
+
         Texture2D playerSprite;
         Texture2D walkDown;
         Texture2D walkUp;
@@ -34,6 +37,8 @@ namespace LeandroCurioso.ActionRpg
         {
             _graphics.PreferredBackBufferWidth = 1280;
             _graphics.PreferredBackBufferHeight = 720;
+            this.camera = new Camera(_graphics.GraphicsDevice);
+
             _graphics.ApplyChanges();
 
             base.Initialize();
@@ -50,6 +55,13 @@ namespace LeandroCurioso.ActionRpg
             background = Content.Load<Texture2D>("background");
             ball = Content.Load<Texture2D>("ball");
             skull = Content.Load<Texture2D>("skull");
+
+            player.animations[(int)Dir.Down] = new SpriteAnimation(walkDown, 4, 8);
+            player.animations[(int)Dir.Up] = new SpriteAnimation(walkUp, 4, 8);
+            player.animations[(int)Dir.Left] = new SpriteAnimation(walkLeft, 4, 8);
+            player.animations[(int)Dir.Right] = new SpriteAnimation(walkRight, 4, 8);
+
+            player.anim = player.animations[0];
         }
 
         protected override void Update(GameTime gameTime)
@@ -59,15 +71,18 @@ namespace LeandroCurioso.ActionRpg
 
             player.Update(gameTime);
 
+            this.camera.Position = player.Position;
+            this.camera.Update(gameTime);
+
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(this.camera);
             _spriteBatch.Draw(background, new Vector2(-500, -500), Color.White);
-            _spriteBatch.Draw(playerSprite, player.Position, Color.White);
+            player.anim.Draw(_spriteBatch);
             _spriteBatch.End();
 
             base.Draw(gameTime);
