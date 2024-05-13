@@ -62,6 +62,10 @@ namespace LeandroCurioso.ActionRpg
             player.animations[(int)Dir.Right] = new SpriteAnimation(walkRight, 4, 8);
 
             player.anim = player.animations[0];
+
+            Enemy.enemies.Add(new Enemy(new Vector2(100,200), skull));
+            Enemy.enemies.Add(new Enemy(new Vector2(700,200), skull));
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -71,8 +75,16 @@ namespace LeandroCurioso.ActionRpg
 
             player.Update(gameTime);
 
-            this.camera.Position = player.Position;
-            this.camera.Update(gameTime);
+            camera.Position = player.Position;
+            camera.Update(gameTime);
+
+            foreach(var projectile in Projectile.projectiles) {
+                projectile.Update(gameTime);
+            }
+
+            foreach(var e in Enemy.enemies) {
+                e.Update(gameTime, player.Position);
+            }
 
             base.Update(gameTime);
         }
@@ -80,8 +92,14 @@ namespace LeandroCurioso.ActionRpg
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            _spriteBatch.Begin(this.camera);
+            _spriteBatch.Begin(camera);
             _spriteBatch.Draw(background, new Vector2(-500, -500), Color.White);
+            foreach(var e in Enemy.enemies) {
+                e.anim.Draw(_spriteBatch);
+            }
+           foreach(var projectile in Projectile.projectiles) {
+                _spriteBatch.Draw(ball, new Vector2(projectile.Position.X - 48, projectile.Position.Y - 48), Color.White);
+            }
             player.anim.Draw(_spriteBatch);
             _spriteBatch.End();
 
