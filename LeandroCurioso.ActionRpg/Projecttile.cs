@@ -16,10 +16,18 @@ namespace LeandroCurioso.ActionRpg
         public int radius = 18;
         private Dir direction;
 
+        private bool collided = false;
+
         public Vector2 Position {
             get {
                 return position;
             }
+        }
+
+        public bool Collided
+        {
+            get { return collided; }
+            set { collided = value;}
         }
 
         public static List<Projectile> projectiles = new List<Projectile>();

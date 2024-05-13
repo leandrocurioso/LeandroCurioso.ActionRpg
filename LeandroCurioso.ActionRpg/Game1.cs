@@ -63,9 +63,6 @@ namespace LeandroCurioso.ActionRpg
 
             player.anim = player.animations[0];
 
-            Enemy.enemies.Add(new Enemy(new Vector2(100,200), skull));
-            Enemy.enemies.Add(new Enemy(new Vector2(700,200), skull));
-
         }
 
         protected override void Update(GameTime gameTime)
@@ -75,6 +72,11 @@ namespace LeandroCurioso.ActionRpg
 
             player.Update(gameTime);
 
+            if (!player.Dead)
+            {
+                Controller.Update(gameTime, skull);
+            }
+
             camera.Position = player.Position;
             camera.Update(gameTime);
 
@@ -83,8 +85,29 @@ namespace LeandroCurioso.ActionRpg
             }
 
             foreach(var e in Enemy.enemies) {
-                e.Update(gameTime, player.Position);
+                e.Update(gameTime, player.Position, player.Dead);
+                int sum = 32 + e.radius;
+                if (Vector2.Distance(player.Position, e.Position) < sum)
+                {
+                    player.Dead = true;
+                }
             }
+
+            foreach (var projectile in Projectile.projectiles)
+            {
+                foreach (var e in Enemy.enemies)
+                {
+                    int sum = projectile.radius + e.radius;
+                    if (Vector2.Distance(projectile.Position, e.Position) < sum)
+                    {
+                        projectile.Collided = true;
+                        e.Dead = true;
+                    }
+                }
+            }
+
+            Projectile.projectiles.RemoveAll(p => p.Collided);
+            Enemy.enemies.RemoveAll(p => p.Dead);
 
             base.Update(gameTime);
         }
@@ -100,7 +123,10 @@ namespace LeandroCurioso.ActionRpg
            foreach(var projectile in Projectile.projectiles) {
                 _spriteBatch.Draw(ball, new Vector2(projectile.Position.X - 48, projectile.Position.Y - 48), Color.White);
             }
-            player.anim.Draw(_spriteBatch);
+           if (!player.Dead)
+            {
+                player.anim.Draw(_spriteBatch);
+            }
             _spriteBatch.End();
 
             base.Draw(gameTime);

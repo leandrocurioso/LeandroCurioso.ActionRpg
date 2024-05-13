@@ -16,6 +16,7 @@ namespace LeandroCurioso.ActionRpg
         private Dir direction = Dir.Down;
         private bool isMoving = false;
         private KeyboardState kStateOld = Keyboard.GetState();
+        public bool Dead = false;
 
         public Vector2 Position { get { return position; } }
         public SpriteAnimation anim;
@@ -67,21 +68,38 @@ namespace LeandroCurioso.ActionRpg
                 isMoving = false;
             }
 
+            if (Dead)
+            {
+                isMoving = false;
+            }
+
             if (isMoving)
             {
                 switch (direction)
                 {
                     case Dir.Down:
-                        position.Y += speed * dt;
+                        if (position.Y < 1250)
+                        {
+                            position.Y += speed * dt;
+                        }
                         break;
                     case Dir.Up:
-                        position.Y -= speed * dt;
+                        if (position.Y > 200)
+                        {
+                            position.Y -= speed * dt;
+                        }
                         break;
                     case Dir.Left:
-                        position.X -= speed * dt;
+                        if (position.X > 225)
+                        {
+                            position.X -= speed * dt;
+                        }
                         break;
                     case Dir.Right:
-                        position.X += speed * dt;
+                        if (position.X < 1275)
+                        {
+                            position.X += speed * dt;
+                        }
                         break;
                 }
             }
