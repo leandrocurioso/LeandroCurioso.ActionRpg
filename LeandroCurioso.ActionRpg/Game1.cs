@@ -2,11 +2,19 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 
 namespace LeandroCurioso.ActionRpg
 {
     enum Dir {
         Down, Up, Left, Right
+    }
+
+    public static class MySounds
+    {
+        public static SoundEffect projectileSound;
+        public static Song bgMusic;
     }
 
     public class Game1 : Game
@@ -47,6 +55,9 @@ namespace LeandroCurioso.ActionRpg
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            background = Content.Load<Texture2D>("background");
+
             playerSprite = Content.Load<Texture2D>("player/player");
             walkDown = Content.Load<Texture2D>("player/walkDown");
             walkUp = Content.Load<Texture2D>("player/walkUp");
@@ -63,6 +74,9 @@ namespace LeandroCurioso.ActionRpg
 
             player.anim = player.animations[0];
 
+            MySounds.projectileSound = Content.Load<SoundEffect>("Sounds/blip");
+            MySounds.bgMusic = Content.Load<Song>("Sounds/nature");
+            MediaPlayer.Play(MySounds.bgMusic);
         }
 
         protected override void Update(GameTime gameTime)
